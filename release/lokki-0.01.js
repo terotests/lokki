@@ -372,6 +372,7 @@
 
                 var o = util.inspect(process.memoryUsage());
                 console.log("process mem ", o);
+                console.log("process rss = ", o.rss);
                 me.value("rss", o["rss"]);
                 me.value("heapTotal", o.heapTotal);
                 me.value("heapUsed", o.heapUsed);
