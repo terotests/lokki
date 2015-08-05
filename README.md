@@ -7,7 +7,11 @@ A logging module for in-browser and node.js testing
 ## Running
 
 ```javascript
-// examples and docs coming later on.
+var lokki = dataModule.lokki("myTest", {
+	"myTest" : true,
+	"logFile" : "log.txt",
+	"logFileRefresh" : 10
+});
 ```
 
 # Licence
