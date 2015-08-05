@@ -88,6 +88,7 @@ MIT.
 
 
 - [_classFactory](README.md#lokki__classFactory)
+- [_initLogRefresh](README.md#lokki__initLogRefresh)
 - [addMetrics](README.md#lokki_addMetrics)
 - [log](README.md#lokki_log)
 - [recordHeap](README.md#lokki_recordHeap)
@@ -376,6 +377,12 @@ The class has following internal singleton variables:
         
 * _instanceCache
         
+* _settings
+        
+* _fs
+        
+* _logFileInited
+        
         
 ### <a name="lokki__classFactory"></a>lokki::_classFactory(id)
 
@@ -388,10 +395,51 @@ if(_instanceCache[id]) return _instanceCache[id];
 _instanceCache[id] = this;
 ```
 
+### <a name="lokki__initLogRefresh"></a>lokki::_initLogRefresh(options)
+
+Initializes the settings refresh for logging
+```javascript
+
+// simple node.js detection
+if(typeof(global) == "undefined") return;
+if(typeof(process) == "undefined") return;
+
+if(_logFileInited) return;
+
+if(!_fs) _fs = require("fs");
+
+var secs = options.logFileRefresh || 60;
+
+_logFileInited = true;
+
+later().every(secs, function() {
+     _fs.readFile(options.logFile, "utf8", function (err, data) {
+        if (err) return;
+        try {
+            var o = JSON.parse(data);
+            if(o) {
+                for(var n in o) {
+                    if(o.hasOwnProperty(n)) _settings[n] = o[n];
+                }
+                console.log("Did refresh the logfile");
+                console.log(data);
+            }
+        } catch(e) {
+            
+        }
+        
+    });    
+});
+
+
+```
+
 ### <a name="lokki_addMetrics"></a>lokki::addMetrics(name, value)
 
 
 ```javascript
+
+if(!_settings[this._tag]) return;
 
 var mObj = this._metrics[name];
 
@@ -425,18 +473,44 @@ mObj.avg = mObj.total / mObj.cnt;
 
 ```javascript
 
+options = options || {};
+
 this._tag = tag;
 this._log = [];
 
 // logging certain performance charateristics
 this._metrics = {};
 
+if(!_settings) {
+    _settings = {};
+}
+
+for(var n in options) {
+    if(options.hasOwnProperty(n)) _settings[n] = options[n];
+}
+
+if(options.logFile) {
+    this._initLogRefresh(options);
+}
+
 var me = this;
 
 var _log1 = function() {
     
+    if(!_settings[me._tag]) return;
+    
     if(me._log.length==0) return;
-    if(!console.group) return;
+    if(!console.group) {
+        console.log("--- "+me._tag+" ----- ");
+        me._log.forEach( function(c) {
+            if(c.length==1) console.log(c[0]); 
+            if(c.length==2) console.log(c[0],c[1]); 
+            if(c.length==3) console.log(c[0],c[1],c[2]); 
+            if(c.length==4) console.log(c[0],c[1],c[2],c[3]); 
+        });
+        me._log.length=0;        
+        return;
+    }
     
     console.group(me._tag);
     me._log.forEach( function(c) {
@@ -448,7 +522,10 @@ var _log1 = function() {
     me._log.length=0;
     console.groupEnd();
 };
+
 var _log2 = function() {
+    
+    if(!_settings[me._tag]) return;
     
     if(me._logMemoryCnt && me._logMemoryCnt > 0) {
         me._logMemoryCnt--;
@@ -487,7 +564,7 @@ var _log2 = function() {
 };
 
 
-later().every(10, _log1);
+later().every(1, _log1);
 later().every(10, _log2);
 ```
         
@@ -495,6 +572,10 @@ later().every(10, _log2);
 
 
 ```javascript
+
+if(!_settings[this._tag]) {
+    return;
+}
 
 var data = [];
 // iterate through the arguments array...

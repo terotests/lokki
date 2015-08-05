@@ -296,6 +296,7 @@
         var _instanceCache;
         var _settings;
         var _fs;
+        var _logFileInited;
 
         // Initialize static variables here...
 
@@ -318,9 +319,13 @@
           if (typeof global == "undefined") return;
           if (typeof process == "undefined") return;
 
+          if (_logFileInited) return;
+
           if (!_fs) _fs = require("fs");
 
           var secs = options.logFileRefresh || 60;
+
+          _logFileInited = true;
 
           later().every(secs, function () {
             _fs.readFile(options.logFile, "utf8", function (err, data) {
@@ -404,7 +409,17 @@
             if (!_settings[me._tag]) return;
 
             if (me._log.length == 0) return;
-            if (!console.group) return;
+            if (!console.group) {
+              console.log("--- " + me._tag + " ----- ");
+              me._log.forEach(function (c) {
+                if (c.length == 1) console.log(c[0]);
+                if (c.length == 2) console.log(c[0], c[1]);
+                if (c.length == 3) console.log(c[0], c[1], c[2]);
+                if (c.length == 4) console.log(c[0], c[1], c[2], c[3]);
+              });
+              me._log.length = 0;
+              return;
+            }
 
             console.group(me._tag);
             me._log.forEach(function (c) {
@@ -456,7 +471,7 @@
             }
           };
 
-          later().every(10, _log1);
+          later().every(1, _log1);
           later().every(10, _log2);
         });
 
@@ -465,7 +480,9 @@
          */
         _myTrait_.log = function (t) {
 
-          if (!_settings[this._tag]) return;
+          if (!_settings[this._tag]) {
+            return;
+          }
 
           var data = [];
           // iterate through the arguments array...
