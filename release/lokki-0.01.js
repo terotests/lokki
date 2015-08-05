@@ -370,7 +370,8 @@
               if (process && process.memoryUsage) {
                 var util = require("util");
 
-                var o = JSON.parse(util.inspect(process.memoryUsage()));
+                // var o = JSON.parse( util.inspect(process.memoryUsage()) );
+                var o = process.memoryUsage();
                 console.log("process mem ", o);
                 console.log("process rss = ", o.rss);
                 me.value("rss", o["rss"]);
