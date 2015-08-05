@@ -1,5 +1,5 @@
 // The code template begins here
-'use strict';
+"use strict";
 
 (function () {
 
@@ -8,44 +8,6 @@
   // The class definition is here...
   var lokkiLoki_prototype = function lokkiLoki_prototype() {
     // Then create the traits and subclasses for this class here...
-
-    // trait comes here...
-
-    (function (_myTrait_) {
-      var _eventOn;
-      var _commands;
-
-      // Initialize static variables here...
-
-      /**
-       * @param float t
-       */
-      _myTrait_.guid = function (t) {
-
-        return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-      };
-
-      /**
-       * @param float t
-       */
-      _myTrait_.isArray = function (t) {
-        return Object.prototype.toString.call(t) === '[object Array]';
-      };
-
-      /**
-       * @param float fn
-       */
-      _myTrait_.isFunction = function (fn) {
-        return Object.prototype.toString.call(fn) == '[object Function]';
-      };
-
-      /**
-       * @param float t
-       */
-      _myTrait_.isObject = function (t) {
-        return t === Object(t);
-      };
-    })(this);
 
     // the subclass definition comes around here then
 
@@ -70,7 +32,7 @@
         _myTrait_.add = function (fn, thisObj, args) {
           if (thisObj || args) {
             var tArgs;
-            if (Object.prototype.toString.call(args) === '[object Array]') {
+            if (Object.prototype.toString.call(args) === "[object Array]") {
               tArgs = args;
             } else {
               tArgs = Array.prototype.slice.call(arguments, 2);
@@ -90,7 +52,7 @@
         _myTrait_.after = function (seconds, fn, name) {
 
           if (!name) {
-            name = 'time' + new Date().getTime() + Math.random(10000000);
+            name = "time" + new Date().getTime() + Math.random(10000000);
           }
 
           _everies[name] = {
@@ -116,7 +78,7 @@
         _myTrait_.every = function (seconds, fn, name) {
 
           if (!name) {
-            name = 'time' + new Date().getTime() + Math.random(10000000);
+            name = "time" + new Date().getTime() + Math.random(10000000);
           }
 
           _everies[name] = {
@@ -126,7 +88,7 @@
           };
         };
 
-        if (_myTrait_.__traitInit && !_myTrait_.hasOwnProperty('__traitInit')) _myTrait_.__traitInit = _myTrait_.__traitInit.slice();
+        if (_myTrait_.__traitInit && !_myTrait_.hasOwnProperty("__traitInit")) _myTrait_.__traitInit = _myTrait_.__traitInit.slice();
         if (!_myTrait_.__traitInit) _myTrait_.__traitInit = [];
         _myTrait_.__traitInit.push(function (interval, fn) {
           if (!_initDone) {
@@ -134,13 +96,13 @@
             this.polyfill();
 
             var frame, cancelFrame;
-            if (typeof window != 'undefined') {
-              var frame = window['requestAnimationFrame'],
-                  cancelFrame = window['cancelRequestAnimationFrame'];
-              ['', 'ms', 'moz', 'webkit', 'o'].forEach(function (x) {
+            if (typeof window != "undefined") {
+              var frame = window["requestAnimationFrame"],
+                  cancelFrame = window["cancelRequestAnimationFrame"];
+              ["", "ms", "moz", "webkit", "o"].forEach(function (x) {
                 if (!frame) {
-                  frame = window[x + 'RequestAnimationFrame'];
-                  cancelFrame = window[x + 'CancelAnimationFrame'] || window[x + 'CancelRequestAnimationFrame'];
+                  frame = window[x + "RequestAnimationFrame"];
+                  cancelFrame = window[x + "CancelAnimationFrame"] || window[x + "CancelRequestAnimationFrame"];
                 }
               });
             }
@@ -163,7 +125,7 @@
               var ms = new Date().getTime();
               var fn;
               while (fn = _callers.shift()) {
-                if (Object.prototype.toString.call(fn) === '[object Array]') {
+                if (Object.prototype.toString.call(fn) === "[object Array]") {
                   fn[1].apply(fn[0], fn[2]);
                 } else {
                   fn();
@@ -267,7 +229,7 @@
           m.__factoryClass.forEach(function (initF) {
             res = initF.apply(m, args);
           });
-          if (typeof res == 'function') {
+          if (typeof res == "function") {
             if (res._classInfo.name != later._classInfo.name) return new res(a, b, c, d, e, f, g, h);
           } else {
             if (res) return res;
@@ -278,22 +240,227 @@
             initF.apply(m, args);
           });
         } else {
-          if (typeof m.init == 'function') m.init.apply(m, args);
+          if (typeof m.init == "function") m.init.apply(m, args);
         }
       } else return new later(a, b, c, d, e, f, g, h);
     };
     // inheritance is here
 
     later._classInfo = {
-      name: 'later'
+      name: "later"
     };
     later.prototype = new later_prototype();
+
+    // the subclass definition comes around here then
+
+    // The class definition is here...
+    var lokki_prototype = function lokki_prototype() {
+      // Then create the traits and subclasses for this class here...
+
+      // trait comes here...
+
+      (function (_myTrait_) {
+
+        // Initialize static variables here...
+
+        /**
+         * @param float t
+         */
+        _myTrait_.guid = function (t) {
+          return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+        };
+
+        /**
+         * @param float t
+         */
+        _myTrait_.isArray = function (t) {
+          return t instanceof Array;
+        };
+
+        /**
+         * @param float fn
+         */
+        _myTrait_.isFunction = function (fn) {
+          return Object.prototype.toString.call(fn) == "[object Function]";
+        };
+
+        /**
+         * @param float t
+         */
+        _myTrait_.isObject = function (t) {
+          return t === Object(t);
+        };
+      })(this);
+
+      (function (_myTrait_) {
+        var _instanceCache;
+
+        // Initialize static variables here...
+
+        if (!_myTrait_.hasOwnProperty("__factoryClass")) _myTrait_.__factoryClass = [];
+        _myTrait_.__factoryClass.push(function (id) {
+          if (!id) return;
+
+          if (!_instanceCache) _instanceCache = {};
+          if (_instanceCache[id]) return _instanceCache[id];
+          _instanceCache[id] = this;
+        });
+
+        /**
+         * @param float name
+         * @param float value
+         */
+        _myTrait_.addMetrics = function (name, value) {
+
+          var mObj = this._metrics[name];
+
+          if (!mObj) {
+            mObj = this._metrics[name] = {
+              cnt: 0,
+              min: value,
+              max: value,
+              total: 0
+            };
+          }
+
+          mObj.cnt++;
+          mObj.total += value;
+
+          if (mObj.max < value) mObj.max = value;
+          if (mObj.min > value) mObj.min = value;
+
+          mObj.avg = mObj.total / mObj.cnt;
+        };
+
+        if (_myTrait_.__traitInit && !_myTrait_.hasOwnProperty("__traitInit")) _myTrait_.__traitInit = _myTrait_.__traitInit.slice();
+        if (!_myTrait_.__traitInit) _myTrait_.__traitInit = [];
+        _myTrait_.__traitInit.push(function (tag, options) {
+
+          this._tag = tag;
+          this._log = [];
+
+          // logging certain performance charateristics
+          this._metrics = {};
+
+          var me = this;
+          later().every(1 / 5, function () {
+
+            if (me._log.length == 0) return;
+
+            console.group(me._tag);
+            me._log.forEach(function (c) {
+              if (c.length == 1) console.log(c[0]);
+              if (c.length == 2) console.log(c[0], c[1]);
+              if (c.length == 3) console.log(c[0], c[1], c[2]);
+              if (c.length == 4) console.log(c[0], c[1], c[2], c[3]);
+            });
+            me._log.length = 0;
+            console.groupEnd();
+          });
+
+          later().every(1 / 5, function () {
+
+            if (me._logMemoryCnt && me._logMemoryCnt > 0) {
+              me._logMemoryCnt--;
+              if (process && process.memoryUsage) {
+                var util = require("util");
+
+                var o = util.inspect(process.memoryUsage());
+                me.value("rss", o.rss);
+                me.value("heapTotal", o.heapTotal);
+                me.value("heapUsed", o.heapUsed);
+                /*
+                { rss: 4935680,
+                heapTotal: 1826816,
+                heapUsed: 650472 }            
+                */
+              }
+              // process.memoryUsage()
+            }
+
+            console.group("Metrics");
+            console.table(me._metrics, ["cnt", "min", "max", "avg"]);
+            console.groupEnd();
+          });
+        });
+
+        /**
+         * @param float t
+         */
+        _myTrait_.log = function (t) {
+
+          var data = [];
+          // iterate through the arguments array...
+          for (var i = 0; i < arguments.length; i++) {
+            data.push(arguments[i]);
+          }
+          this._log.push(data);
+        };
+
+        /**
+         * @param float cnt
+         */
+        _myTrait_.recordHeap = function (cnt) {
+          this._logMemoryCnt = cnt;
+        };
+
+        /**
+         * @param float name
+         * @param float value
+         */
+        _myTrait_.value = function (name, value) {
+          this.addMetrics(name, value);
+        };
+      })(this);
+    };
+
+    var lokki = function lokki(a, b, c, d, e, f, g, h) {
+      var m = this,
+          res;
+      if (m instanceof lokki) {
+        var args = [a, b, c, d, e, f, g, h];
+        if (m.__factoryClass) {
+          m.__factoryClass.forEach(function (initF) {
+            res = initF.apply(m, args);
+          });
+          if (typeof res == "function") {
+            if (res._classInfo.name != lokki._classInfo.name) return new res(a, b, c, d, e, f, g, h);
+          } else {
+            if (res) return res;
+          }
+        }
+        if (m.__traitInit) {
+          m.__traitInit.forEach(function (initF) {
+            initF.apply(m, args);
+          });
+        } else {
+          if (typeof m.init == "function") m.init.apply(m, args);
+        }
+      } else return new lokki(a, b, c, d, e, f, g, h);
+    };
+    // inheritance is here
+
+    lokki._classInfo = {
+      name: "lokki"
+    };
+    lokki.prototype = new lokki_prototype();
+
+    (function () {
+      if (typeof define !== "undefined" && define !== null && define.amd != null) {
+        __amdDefs__["lokki"] = lokki;
+        this.lokki = lokki;
+      } else if (typeof module !== "undefined" && module !== null && module.exports != null) {
+        module.exports["lokki"] = lokki;
+      } else {
+        this.lokki = lokki;
+      }
+    }).call(new Function("return this")());
 
     (function (_myTrait_) {
 
       // Initialize static variables here...
 
-      if (_myTrait_.__traitInit && !_myTrait_.hasOwnProperty('__traitInit')) _myTrait_.__traitInit = _myTrait_.__traitInit.slice();
+      if (_myTrait_.__traitInit && !_myTrait_.hasOwnProperty("__traitInit")) _myTrait_.__traitInit = _myTrait_.__traitInit.slice();
       if (!_myTrait_.__traitInit) _myTrait_.__traitInit = [];
       _myTrait_.__traitInit.push(function (options) {});
     })(this);
@@ -308,7 +475,7 @@
         m.__factoryClass.forEach(function (initF) {
           res = initF.apply(m, args);
         });
-        if (typeof res == 'function') {
+        if (typeof res == "function") {
           if (res._classInfo.name != lokkiLoki._classInfo.name) return new res(a, b, c, d, e, f, g, h);
         } else {
           if (res) return res;
@@ -319,31 +486,31 @@
           initF.apply(m, args);
         });
       } else {
-        if (typeof m.init == 'function') m.init.apply(m, args);
+        if (typeof m.init == "function") m.init.apply(m, args);
       }
     } else return new lokkiLoki(a, b, c, d, e, f, g, h);
   };
   // inheritance is here
 
   lokkiLoki._classInfo = {
-    name: 'lokkiLoki'
+    name: "lokkiLoki"
   };
   lokkiLoki.prototype = new lokkiLoki_prototype();
 
   (function () {
-    if (typeof define !== 'undefined' && define !== null && define.amd != null) {
-      __amdDefs__['lokkiLoki'] = lokkiLoki;
+    if (typeof define !== "undefined" && define !== null && define.amd != null) {
+      __amdDefs__["lokkiLoki"] = lokkiLoki;
       this.lokkiLoki = lokkiLoki;
-    } else if (typeof module !== 'undefined' && module !== null && module.exports != null) {
-      module.exports['lokkiLoki'] = lokkiLoki;
+    } else if (typeof module !== "undefined" && module !== null && module.exports != null) {
+      module.exports["lokkiLoki"] = lokkiLoki;
     } else {
       this.lokkiLoki = lokkiLoki;
     }
-  }).call(new Function('return this')());
+  }).call(new Function("return this")());
 
-  if (typeof define !== 'undefined' && define !== null && define.amd != null) {
+  if (typeof define !== "undefined" && define !== null && define.amd != null) {
     define(__amdDefs__);
   }
-}).call(new Function('return this')());
+}).call(new Function("return this")());
 
 // --- let's not ---

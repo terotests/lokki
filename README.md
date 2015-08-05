@@ -51,23 +51,12 @@ MIT.
 
    
     
-##### trait _dataTrait
-
-- [guid](README.md#_dataTrait_guid)
-- [isArray](README.md#_dataTrait_isArray)
-- [isFunction](README.md#_dataTrait_isFunction)
-- [isObject](README.md#_dataTrait_isObject)
-
-
-    
     
     
     
 
 
    
-      
-    
       
             
 #### Class later
@@ -88,6 +77,41 @@ MIT.
 
 
    
+
+
+
+      
+    
+      
+            
+#### Class lokki
+
+
+- [_classFactory](README.md#lokki__classFactory)
+- [addMetrics](README.md#lokki_addMetrics)
+- [log](README.md#lokki_log)
+- [recordHeap](README.md#lokki_recordHeap)
+- [value](README.md#lokki_value)
+
+
+
+   
+    
+##### trait _dataTrait
+
+- [guid](README.md#_dataTrait_guid)
+- [isArray](README.md#_dataTrait_isArray)
+- [isFunction](README.md#_dataTrait_isFunction)
+- [isObject](README.md#_dataTrait_isObject)
+
+
+    
+    
+
+
+   
+      
+    
 
 
 
@@ -115,56 +139,12 @@ The class has following internal singleton variables:
 
    
     
-## trait _dataTrait
-
-The class has following internal singleton variables:
-        
-* _eventOn
-        
-* _commands
-        
-        
-### <a name="_dataTrait_guid"></a>_dataTrait::guid(t)
-
-
-```javascript
-
-return Math.random().toString(36).substring(2, 15) +
-        Math.random().toString(36).substring(2, 15);
-
-```
-
-### <a name="_dataTrait_isArray"></a>_dataTrait::isArray(t)
-
-
-```javascript
-return Object.prototype.toString.call( t ) === '[object Array]';
-```
-
-### <a name="_dataTrait_isFunction"></a>_dataTrait::isFunction(fn)
-
-
-```javascript
-return Object.prototype.toString.call(fn) == '[object Function]';
-```
-
-### <a name="_dataTrait_isObject"></a>_dataTrait::isObject(t)
-
-
-```javascript
-return t === Object(t);
-```
-
-
-    
     
     
     
 
 
    
-      
-    
       
             
 # Class later
@@ -382,6 +362,185 @@ if(i>=0) {
 
 
    
+
+
+
+      
+    
+      
+            
+# Class lokki
+
+
+The class has following internal singleton variables:
+        
+* _instanceCache
+        
+        
+### <a name="lokki__classFactory"></a>lokki::_classFactory(id)
+
+
+```javascript
+if(!id) return;
+
+if(!_instanceCache) _instanceCache = {};
+if(_instanceCache[id]) return _instanceCache[id];
+_instanceCache[id] = this;
+```
+
+### <a name="lokki_addMetrics"></a>lokki::addMetrics(name, value)
+
+
+```javascript
+
+var mObj = this._metrics[name];
+
+if(!mObj) {
+    mObj = this._metrics[name] = {
+        cnt : 0,
+        min : value,
+        max : value,
+        total : 0
+    };
+}
+
+mObj.cnt++;
+mObj.total += value;
+
+if(mObj.max < value) mObj.max = value;
+if(mObj.min > value) mObj.min = value;
+
+mObj.avg = mObj.total / mObj.cnt;
+
+```
+
+### lokki::constructor( tag, options )
+
+```javascript
+
+this._tag = tag;
+this._log = [];
+
+// logging certain performance charateristics
+this._metrics = {};
+
+var me = this;
+later().every(1/5, function() {
+    
+    if(me._log.length==0) return;
+    
+    console.group(me._tag);
+    me._log.forEach( function(c) {
+        if(c.length==1) console.log(c[0]); 
+        if(c.length==2) console.log(c[0],c[1]); 
+        if(c.length==3) console.log(c[0],c[1],c[2]); 
+        if(c.length==4) console.log(c[0],c[1],c[2],c[3]); 
+    });
+    me._log.length=0;
+    console.groupEnd();
+});
+
+later().every(1/5, function() {
+    
+    if(me._logMemoryCnt && me._logMemoryCnt > 0) {
+        me._logMemoryCnt--;
+        if(process && process.memoryUsage) {
+            var util = require('util');
+            
+            var o = util.inspect(process.memoryUsage());            
+            me.value("rss", o.rss);
+            me.value("heapTotal", o.heapTotal);
+            me.value("heapUsed", o.heapUsed);
+            /*
+{ rss: 4935680,
+  heapTotal: 1826816,
+  heapUsed: 650472 }            
+            */
+        }
+        // process.memoryUsage()
+    }
+    
+    console.group("Metrics");
+    console.table(me._metrics, ["cnt", "min", "max", "avg"]);
+    console.groupEnd();
+    
+});
+```
+        
+### <a name="lokki_log"></a>lokki::log(t)
+
+
+```javascript
+
+var data = [];
+// iterate through the arguments array...
+for(var i=0; i<arguments.length; i++) {
+    data.push(arguments[i]);
+}
+this._log.push( data );
+```
+
+### <a name="lokki_recordHeap"></a>lokki::recordHeap(cnt)
+
+
+```javascript
+this._logMemoryCnt = cnt;
+```
+
+### <a name="lokki_value"></a>lokki::value(name, value)
+
+
+```javascript
+this.addMetrics(name, value);
+```
+
+
+
+   
+    
+## trait _dataTrait
+
+The class has following internal singleton variables:
+        
+        
+### <a name="_dataTrait_guid"></a>_dataTrait::guid(t)
+
+
+```javascript
+return Math.random().toString(36).substring(2, 15) +
+        Math.random().toString(36).substring(2, 15);
+
+```
+
+### <a name="_dataTrait_isArray"></a>_dataTrait::isArray(t)
+
+
+```javascript
+return t instanceof Array;
+```
+
+### <a name="_dataTrait_isFunction"></a>_dataTrait::isFunction(fn)
+
+
+```javascript
+return Object.prototype.toString.call(fn) == '[object Function]';
+```
+
+### <a name="_dataTrait_isObject"></a>_dataTrait::isObject(t)
+
+
+```javascript
+return t === Object(t);
+```
+
+
+    
+    
+
+
+   
+      
+    
 
 
 
