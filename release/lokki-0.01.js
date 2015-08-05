@@ -317,6 +317,7 @@
           if (!mObj) {
             mObj = this._metrics[name] = {
               cnt: 0,
+              latest: value,
               min: value,
               max: value,
               total: 0
@@ -329,6 +330,7 @@
 
           mObj.cnt++;
           mObj.total += value;
+          mObj.latest = value;
 
           if (mObj.max < value) mObj.max = value;
           if (mObj.min > value) mObj.min = value;
@@ -389,13 +391,13 @@
 
             if (console && console.group) {
               console.group("Metrics");
-              console.table(me._metrics, ["cnt", "min", "max", "avg"]);
+              console.table(me._metrics, ["cnt", "latest", "min", "max", "avg"]);
               console.groupEnd();
             } else {
               console.log("=== node.js METRICS ===");
               for (var n in me._metrics) {
                 var o = me._metrics[n];
-                console.log(n, o["cnt"], o["min"], o["max"], o["avg"]);
+                console.log(n, o["cnt"], o["latest"], o["min"], o["max"], o["avg"]);
               }
             }
           });

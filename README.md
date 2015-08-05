@@ -398,19 +398,26 @@ var mObj = this._metrics[name];
 if(!mObj) {
     mObj = this._metrics[name] = {
         cnt : 0,
+        latest : value,
         min : value,
         max : value,
         total : 0
     };
 }
 
+value = value * 1.0;
+
+if(isNaN(value)) return;
+
 mObj.cnt++;
 mObj.total += value;
+mObj.latest = value;
 
 if(mObj.max < value) mObj.max = value;
 if(mObj.min > value) mObj.min = value;
 
 mObj.avg = mObj.total / mObj.cnt;
+
 
 ```
 
@@ -428,6 +435,7 @@ var me = this;
 later().every(1/5, function() {
     
     if(me._log.length==0) return;
+    if(!console.group) return;
     
     console.group(me._tag);
     me._log.forEach( function(c) {
@@ -447,10 +455,14 @@ later().every(1/5, function() {
         if(process && process.memoryUsage) {
             var util = require('util');
             
-            var o = util.inspect(process.memoryUsage());            
-            me.value("rss", o.rss);
+            // var o = JSON.parse( util.inspect(process.memoryUsage()) );
+            var o = process.memoryUsage();
+
+            me.value("rss", o["rss"]);
             me.value("heapTotal", o.heapTotal);
             me.value("heapUsed", o.heapUsed);
+            me.value("heapUsage", parseInt( 100* o.heapUsed / o.heapTotal) );
+            me.value("fromTotalGb", parseFloat( 100* o.heapTotal / (1024*1024*1024) ).toFixed(2) );
             /*
 { rss: 4935680,
   heapTotal: 1826816,
@@ -460,9 +472,17 @@ later().every(1/5, function() {
         // process.memoryUsage()
     }
     
-    console.group("Metrics");
-    console.table(me._metrics, ["cnt", "min", "max", "avg"]);
-    console.groupEnd();
+    if(console && console.group) {
+        console.group("Metrics");
+        console.table(me._metrics, ["cnt", "latest","min", "max", "avg"]);
+        console.groupEnd();
+    } else {
+        console.log("=== node.js METRICS ===")
+       for(var n in me._metrics) {
+           var o = me._metrics[n];
+           console.log(n, o["cnt"], o["latest"], o["min"], o["max"], o["avg"]   );
+       }
+    }
     
 });
 ```
