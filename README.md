@@ -432,7 +432,8 @@ this._log = [];
 this._metrics = {};
 
 var me = this;
-later().every(1/5, function() {
+
+var _log1 = function() {
     
     if(me._log.length==0) return;
     if(!console.group) return;
@@ -446,9 +447,8 @@ later().every(1/5, function() {
     });
     me._log.length=0;
     console.groupEnd();
-});
-
-later().every(1/5, function() {
+};
+var _log2 = function() {
     
     if(me._logMemoryCnt && me._logMemoryCnt > 0) {
         me._logMemoryCnt--;
@@ -484,7 +484,11 @@ later().every(1/5, function() {
        }
     }
     
-});
+};
+
+
+later().every(10, _log1);
+later().every(10, _log2);
 ```
         
 ### <a name="lokki_log"></a>lokki::log(t)
