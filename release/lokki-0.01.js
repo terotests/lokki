@@ -349,7 +349,8 @@
           this._metrics = {};
 
           var me = this;
-          later().every(1 / 5, function () {
+
+          var _log1 = function _log1() {
 
             if (me._log.length == 0) return;
             if (!console.group) return;
@@ -363,9 +364,8 @@
             });
             me._log.length = 0;
             console.groupEnd();
-          });
-
-          later().every(1 / 5, function () {
+          };
+          var _log2 = function _log2() {
 
             if (me._logMemoryCnt && me._logMemoryCnt > 0) {
               me._logMemoryCnt--;
@@ -400,7 +400,10 @@
                 console.log(n, o["cnt"], o["latest"], o["min"], o["max"], o["avg"]);
               }
             }
-          });
+          };
+
+          later().every(10, _log1);
+          later().every(10, _log2);
         });
 
         /**
