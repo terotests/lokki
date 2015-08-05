@@ -294,6 +294,8 @@
 
       (function (_myTrait_) {
         var _instanceCache;
+        var _settings;
+        var _fs;
 
         // Initialize static variables here...
 
@@ -307,10 +309,43 @@
         });
 
         /**
+         * Initializes the settings refresh for logging
+         * @param Object options
+         */
+        _myTrait_._initLogRefresh = function (options) {
+
+          // simple node.js detection
+          if (typeof global == "undefined") return;
+          if (typeof process == "undefined") return;
+
+          if (!_fs) _fs = require("fs");
+
+          var secs = options.logFileRefresh || 60;
+
+          later().every(secs, function () {
+            _fs.readFile(options.logFile, "utf8", function (err, data) {
+              if (err) return;
+              try {
+                var o = JSON.parse(data);
+                if (o) {
+                  for (var n in o) {
+                    if (o.hasOwnProperty(n)) _settings[n] = o[n];
+                  }
+                  console.log("Did refresh the logfile");
+                  console.log(data);
+                }
+              } catch (e) {}
+            });
+          });
+        };
+
+        /**
          * @param float name
          * @param float value
          */
         _myTrait_.addMetrics = function (name, value) {
+
+          if (!_settings[this._tag]) return;
 
           var mObj = this._metrics[name];
 
@@ -342,15 +377,31 @@
         if (!_myTrait_.__traitInit) _myTrait_.__traitInit = [];
         _myTrait_.__traitInit.push(function (tag, options) {
 
+          options = options || {};
+
           this._tag = tag;
           this._log = [];
 
           // logging certain performance charateristics
           this._metrics = {};
 
+          if (!_settings) {
+            _settings = {};
+          }
+
+          for (var n in options) {
+            if (options.hasOwnProperty(n)) _settings[n] = options[n];
+          }
+
+          if (options.logFile) {
+            this._initLogRefresh(options);
+          }
+
           var me = this;
 
           var _log1 = function _log1() {
+
+            if (!_settings[me._tag]) return;
 
             if (me._log.length == 0) return;
             if (!console.group) return;
@@ -365,7 +416,10 @@
             me._log.length = 0;
             console.groupEnd();
           };
+
           var _log2 = function _log2() {
+
+            if (!_settings[me._tag]) return;
 
             if (me._logMemoryCnt && me._logMemoryCnt > 0) {
               me._logMemoryCnt--;
@@ -410,6 +464,8 @@
          * @param float t
          */
         _myTrait_.log = function (t) {
+
+          if (!_settings[this._tag]) return;
 
           var data = [];
           // iterate through the arguments array...
