@@ -377,6 +377,7 @@
                 me.value("rss", o["rss"]);
                 me.value("heapTotal", o.heapTotal);
                 me.value("heapUsed", o.heapUsed);
+                me.value("heapUsage", parseInt(100 * o.heapUsed / o.heapTotal));
                 /*
                 { rss: 4935680,
                 heapTotal: 1826816,
