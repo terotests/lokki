@@ -393,7 +393,7 @@
               console.log("=== node.js METRICS ===");
               for (var n in me._metrics) {
                 var o = me._metrics[n];
-                console.log(n, o["cnt"], o["min"], o["max"], o["avg"]);
+                console.log(n, o["cnt"], o["min"], o["max"], o["avg"], o["total"]);
               }
             }
           });
