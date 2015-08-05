@@ -2,6 +2,14 @@
 
 A logging module for in-browser and node.js testing
 
+Features:
+
+1. Logs and be enabled and disabled by a log group
+2. Supports metrics with min, max, average and last value
+3. With Browser supports grouping by log group
+4. With node.js supports realoading the settings periodically from external file
+
+
 ## Setup
 
 ## Adding logs
@@ -10,6 +18,15 @@ A logging module for in-browser and node.js testing
 _log = lokki("tcp");
 _log.log("record information");
 ```
+
+## Enabling a log group
+
+```javascript
+// enables group "tcp" for logging
+lokki().settings({"tcp":true});
+```
+
+Alternatively, in node.js you can specify an external file to be loaded periodically to update the log settings.
 
 ## Adding metrics
 
@@ -22,7 +39,7 @@ _log.value("memory usage", 13000);
 ```javascript
 var lokki = lokki("myTest", {
 	"logFile" : "log.txt",
-	"logFileRefresh" : 10
+	"logFileRefresh" : 10   // update every 10 seconds the logging settings
 });
 ```
 
