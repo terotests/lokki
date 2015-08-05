@@ -373,7 +373,7 @@
                 me.value("heapTotal", o.heapTotal);
                 me.value("heapUsed", o.heapUsed);
                 me.value("heapUsage", parseInt(100 * o.heapUsed / o.heapTotal));
-                me.value("fromTotalGb", parseInt(100 * o.heapTotal / (1024 * 1024 * 1024)));
+                me.value("fromTotalGb", parseFloat(100 * o.heapTotal / (1024 * 1024 * 1024)).toFixed(2));
                 /*
                 { rss: 4935680,
                 heapTotal: 1826816,
