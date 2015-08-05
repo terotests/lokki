@@ -323,6 +323,8 @@
             };
           }
 
+          if (isNaN(value)) return;
+
           mObj.cnt++;
           mObj.total += value;
 
