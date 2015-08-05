@@ -367,6 +367,7 @@
                 var util = require("util");
 
                 var o = util.inspect(process.memoryUsage());
+                console.log("process mem ", o);
                 me.value("rss", o.rss);
                 me.value("heapTotal", o.heapTotal);
                 me.value("heapUsed", o.heapUsed);
