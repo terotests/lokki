@@ -346,6 +346,7 @@
           later().every(1 / 5, function () {
 
             if (me._log.length == 0) return;
+            if (!console.group) return;
 
             console.group(me._tag);
             me._log.forEach(function (c) {
@@ -378,9 +379,16 @@
               // process.memoryUsage()
             }
 
-            console.group("Metrics");
-            console.table(me._metrics, ["cnt", "min", "max", "avg"]);
-            console.groupEnd();
+            if (console && console.group) {
+              console.group("Metrics");
+              console.table(me._metrics, ["cnt", "min", "max", "avg"]);
+              console.groupEnd();
+            } else {
+              for (var n in me._metrics) {
+                var o = me._metrics[n];
+                console.log(n, o["cnt"], o["min"], o["max"], o["avg"]);
+              }
+            }
           });
         });
 
