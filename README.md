@@ -4,11 +4,23 @@ A logging module for in-browser and node.js testing
 
 ## Setup
 
-## Running
+## Adding logs
 
 ```javascript
-var lokki = dataModule.lokki("myTest", {
-	"myTest" : true,
+_log = lokki("tcp");
+_log.log("record information");
+```
+
+## Adding metrics
+
+```javascript
+_log.value("memory usage", 13000);
+```
+
+## Refreshing the log settings from external file (node.js)
+
+```javascript
+var lokki = lokki("myTest", {
 	"logFile" : "log.txt",
 	"logFileRefresh" : 10
 });
