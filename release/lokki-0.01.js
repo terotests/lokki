@@ -314,8 +314,6 @@
 
           var mObj = this._metrics[name];
 
-          console.log(name, value);
-
           if (!mObj) {
             mObj = this._metrics[name] = {
               cnt: 0,
@@ -332,8 +330,6 @@
           if (mObj.min > value) mObj.min = value;
 
           mObj.avg = mObj.total / mObj.cnt;
-
-          console.log(name, mObj.total);
         };
 
         if (_myTrait_.__traitInit && !_myTrait_.hasOwnProperty("__traitInit")) _myTrait_.__traitInit = _myTrait_.__traitInit.slice();
@@ -372,8 +368,7 @@
 
                 // var o = JSON.parse( util.inspect(process.memoryUsage()) );
                 var o = process.memoryUsage();
-                console.log("process mem ", o);
-                console.log("process rss = ", o.rss);
+
                 me.value("rss", o["rss"]);
                 me.value("heapTotal", o.heapTotal);
                 me.value("heapUsed", o.heapUsed);
