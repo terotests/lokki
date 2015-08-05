@@ -336,8 +336,6 @@
                   for (var n in o) {
                     if (o.hasOwnProperty(n)) _settings[n] = o[n];
                   }
-                  console.log("Did refresh the logfile");
-                  console.log(data);
                 }
               } catch (e) {}
             });
