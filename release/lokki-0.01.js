@@ -498,6 +498,21 @@
         };
 
         /**
+         * @param Object obj
+         */
+        _myTrait_.settings = function (obj) {
+
+          if (obj) {
+
+            if (obj) {
+              for (var n in obj) {
+                if (obj.hasOwnProperty(n)) _settings[n] = obj[n];
+              }
+            }
+          }
+        };
+
+        /**
          * @param float name
          * @param float value
          */

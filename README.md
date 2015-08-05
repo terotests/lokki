@@ -108,6 +108,7 @@ MIT.
 - [addMetrics](README.md#lokki_addMetrics)
 - [log](README.md#lokki_log)
 - [recordHeap](README.md#lokki_recordHeap)
+- [settings](README.md#lokki_settings)
 - [value](README.md#lokki_value)
 
 
@@ -604,6 +605,22 @@ this._log.push( data );
 
 ```javascript
 this._logMemoryCnt = cnt;
+```
+
+### <a name="lokki_settings"></a>lokki::settings(obj)
+
+
+```javascript
+
+if(obj) {
+
+    if(obj) {
+        for(var n in obj) {
+            if(obj.hasOwnProperty(n)) _settings[n] = obj[n];
+        }
+    }    
+    
+}
 ```
 
 ### <a name="lokki_value"></a>lokki::value(name, value)
