@@ -387,6 +387,7 @@
               console.table(me._metrics, ["cnt", "min", "max", "avg"]);
               console.groupEnd();
             } else {
+              console.log("=== node.js METRICS ===");
               for (var n in me._metrics) {
                 var o = me._metrics[n];
                 console.log(n, o["cnt"], o["min"], o["max"], o["avg"]);
