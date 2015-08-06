@@ -15,7 +15,7 @@ Features:
 ## Adding logs
 
 ```javascript
-_log = lokki("tcp");
+_log = lokki("tcp", { enable : { tcp : true} } );
 _log.log("record information");
 ```
 
@@ -23,7 +23,7 @@ _log.log("record information");
 
 ```javascript
 // enables group "tcp" for logging
-lokki().settings({"tcp":true});
+lokki().enable({"tcp":true});
 ```
 
 Alternatively, in node.js you can specify an external file to be loaded periodically to update the log settings.
@@ -41,6 +41,15 @@ var lokki = lokki("myTest", {
 	"logFile" : "log.txt",
 	"logFileRefresh" : 10   // update every 10 seconds the logging settings
 });
+```
+
+The contents of the log settings would be like
+```javascript
+{ 
+	enable : {
+		"tcp" : false 
+	}
+}
 ```
 
 # Licence
@@ -123,6 +132,7 @@ MIT.
 - [_classFactory](README.md#lokki__classFactory)
 - [_initLogRefresh](README.md#lokki__initLogRefresh)
 - [addMetrics](README.md#lokki_addMetrics)
+- [enable](README.md#lokki_enable)
 - [log](README.md#lokki_log)
 - [recordHeap](README.md#lokki_recordHeap)
 - [settings](README.md#lokki_settings)
@@ -451,9 +461,9 @@ later().every(secs, function() {
         if (err) return;
         try {
             var o = JSON.parse(data);
-            if(o) {
-                for(var n in o) {
-                    if(o.hasOwnProperty(n)) _settings[n] = o[n];
+            if(o && o.enable) {
+                for(var n in o.enable) {
+                    if(o.hasOwnProperty(n)) _settings[n] = o.enable[n];
                 }
             }
         } catch(e) {
@@ -501,6 +511,22 @@ mObj.avg = mObj.total / mObj.cnt;
 
 ```
 
+### <a name="lokki_enable"></a>lokki::enable(obj)
+
+
+```javascript
+
+if(obj) {
+
+    if(obj) {
+        for(var n in obj) {
+            if(obj.hasOwnProperty(n)) _settings[n] = obj[n];
+        }
+    }    
+    
+}
+```
+
 ### lokki::constructor( tag, options )
 
 ```javascript
@@ -510,6 +536,9 @@ options = options || {};
 this._tag = tag;
 this._log = [];
 
+options.logInterval = options.logInterval || 1;
+options.metricsInterval = options.metricsInterval || 10;
+
 // logging certain performance charateristics
 this._metrics = {};
 
@@ -517,8 +546,10 @@ if(!_settings) {
     _settings = {};
 }
 
-for(var n in options) {
-    if(options.hasOwnProperty(n)) _settings[n] = options[n];
+if(options.enable) {
+    for(var n in options.enable) {
+        if(options.hasOwnProperty(n)) _settings[n] = options.enable[n];
+    }
 }
 
 if(options.logFile) {
@@ -530,6 +561,7 @@ var me = this;
 var _log1 = function() {
     
     if(!_settings[me._tag]) return;
+    if(!options["console"]) return;
     
     if(me._log.length==0) return;
     if(!console.group) {
@@ -596,8 +628,8 @@ var _log2 = function() {
 };
 
 
-later().every(1, _log1);
-later().every(10, _log2);
+later().every(options.logInterval, _log1);
+later().every(options.metricsInterval, _log2);
 ```
         
 ### <a name="lokki_log"></a>lokki::log(t)

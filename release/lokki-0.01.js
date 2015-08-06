@@ -332,9 +332,9 @@
               if (err) return;
               try {
                 var o = JSON.parse(data);
-                if (o) {
-                  for (var n in o) {
-                    if (o.hasOwnProperty(n)) _settings[n] = o[n];
+                if (o && o.enable) {
+                  for (var n in o.enable) {
+                    if (o.hasOwnProperty(n)) _settings[n] = o.enable[n];
                   }
                 }
               } catch (e) {}
@@ -376,6 +376,21 @@
           mObj.avg = mObj.total / mObj.cnt;
         };
 
+        /**
+         * @param float obj
+         */
+        _myTrait_.enable = function (obj) {
+
+          if (obj) {
+
+            if (obj) {
+              for (var n in obj) {
+                if (obj.hasOwnProperty(n)) _settings[n] = obj[n];
+              }
+            }
+          }
+        };
+
         if (_myTrait_.__traitInit && !_myTrait_.hasOwnProperty("__traitInit")) _myTrait_.__traitInit = _myTrait_.__traitInit.slice();
         if (!_myTrait_.__traitInit) _myTrait_.__traitInit = [];
         _myTrait_.__traitInit.push(function (tag, options) {
@@ -385,6 +400,9 @@
           this._tag = tag;
           this._log = [];
 
+          options.logInterval = options.logInterval || 1;
+          options.metricsInterval = options.metricsInterval || 10;
+
           // logging certain performance charateristics
           this._metrics = {};
 
@@ -392,8 +410,10 @@
             _settings = {};
           }
 
-          for (var n in options) {
-            if (options.hasOwnProperty(n)) _settings[n] = options[n];
+          if (options.enable) {
+            for (var n in options.enable) {
+              if (options.hasOwnProperty(n)) _settings[n] = options.enable[n];
+            }
           }
 
           if (options.logFile) {
@@ -405,6 +425,7 @@
           var _log1 = function _log1() {
 
             if (!_settings[me._tag]) return;
+            if (!options["console"]) return;
 
             if (me._log.length == 0) return;
             if (!console.group) {
@@ -469,8 +490,8 @@
             }
           };
 
-          later().every(1, _log1);
-          later().every(10, _log2);
+          later().every(options.logInterval, _log1);
+          later().every(options.metricsInterval, _log2);
         });
 
         /**
