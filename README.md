@@ -535,6 +535,11 @@ options = options || {};
 
 this._tag = tag;
 this._log = [];
+this._options = options;
+
+if(typeof(global) != "undefined" && typeof(process) != "undefined") {
+    this._isNode = true;
+}
 
 options.logInterval = options.logInterval || 1;
 options.metricsInterval = options.metricsInterval || 10;
@@ -561,35 +566,61 @@ var me = this;
 var _log1 = function() {
     
     if(!_settings[me._tag]) return;
-    if(!options["console"]) return;
-    
     if(me._log.length==0) return;
-    if(!console.group) {
-        console.log("--- "+me._tag+" ----- ");
+    
+    if(me._options["logFile"] && me._isNode) {
+        if(!_fs) _fs = require("fs");
+        var str = "";
+        me._log.forEach( function(c, line) {
+            if(line>0) str+="\n";
+            c.forEach(function(s,i) {
+                if(i>0) str+=",";
+                if(me.isObject(s)) {
+                    str+="[Object]";
+                    return;
+                } 
+                if(me.isArray(s)) {
+                    str+="[Array]";
+                    return;
+                }
+                str+=JSON.stringify(s);
+            });
+        });       
+        str+="\n";
+        _fs.appendFile(me._options["logFile"], str, function (err) {
+            
+        });        
+    }
+    
+    if(me._options["console"]) {
+        if(!console.group) {
+            console.log("--- "+me._tag+" ----- ");
+            me._log.forEach( function(c) {
+                if(c.length==1) console.log(c[0]); 
+                if(c.length==2) console.log(c[0],c[1]); 
+                if(c.length==3) console.log(c[0],c[1],c[2]); 
+                if(c.length==4) console.log(c[0],c[1],c[2],c[3]); 
+            });
+            me._log.length=0;        
+            return;
+        }
+        
+        console.group(me._tag);
         me._log.forEach( function(c) {
             if(c.length==1) console.log(c[0]); 
             if(c.length==2) console.log(c[0],c[1]); 
             if(c.length==3) console.log(c[0],c[1],c[2]); 
             if(c.length==4) console.log(c[0],c[1],c[2],c[3]); 
         });
-        me._log.length=0;        
-        return;
+        me._log.length=0;
+        console.groupEnd();
     }
-    
-    console.group(me._tag);
-    me._log.forEach( function(c) {
-        if(c.length==1) console.log(c[0]); 
-        if(c.length==2) console.log(c[0],c[1]); 
-        if(c.length==3) console.log(c[0],c[1],c[2]); 
-        if(c.length==4) console.log(c[0],c[1],c[2],c[3]); 
-    });
-    me._log.length=0;
-    console.groupEnd();
 };
 
 var _log2 = function() {
     
     if(!_settings[me._tag]) return;
+    if(!me._options["console"]) return;
     
     if(me._logMemoryCnt && me._logMemoryCnt > 0) {
         me._logMemoryCnt--;
