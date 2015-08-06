@@ -326,6 +326,7 @@
           var secs = options.logFileRefresh || 60;
 
           _logFileInited = true;
+          var me = this;
 
           later().every(secs, function () {
             _fs.readFile(options.logFile, "utf8", function (err, data) {
@@ -334,7 +335,15 @@
                 var o = JSON.parse(data);
                 if (o && o.enable) {
                   for (var n in o.enable) {
-                    if (o.hasOwnProperty(n)) _settings[n] = o.enable[n];
+                    if (o.enable.hasOwnProperty(n)) _settings[n] = o.enable[n];
+                  }
+                }
+                if (o) {
+                  for (var n in o) {
+                    if (o.hasOwnProperty(n)) {
+                      if (n == "enable") continue;
+                      me._options[n] = o[n];
+                    }
                   }
                 }
               } catch (e) {}
