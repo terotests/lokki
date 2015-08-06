@@ -297,6 +297,7 @@
         var _settings;
         var _fs;
         var _logFileInited;
+        var _options;
 
         // Initialize static variables here...
 
@@ -329,7 +330,8 @@
           var me = this;
 
           later().every(secs, function () {
-            _fs.readFile(options.logFile, "utf8", function (err, data) {
+            // console.log("checking log file "+options.logSettingsFile);
+            _fs.readFile(options.logSettingsFile, "utf8", function (err, data) {
               if (err) return;
               try {
                 var o = JSON.parse(data);
@@ -346,6 +348,7 @@
                     }
                   }
                 }
+                // console.log(JSON.stringify(o));
               } catch (e) {}
             });
           });
@@ -408,10 +411,20 @@
 
           this._tag = tag;
           this._log = [];
-          this._options = options;
+
+          if (!_options) {
+            _options = {}; // global fo this class
+          }
+
+          this._options = _options;
 
           if (typeof global != "undefined" && typeof process != "undefined") {
             this._isNode = true;
+          }
+
+          for (var n in options) {
+            if (n == "enable") continue;
+            if (options.hasOwnProperty(n)) _options[n] = options[n];
           }
 
           options.logInterval = options.logInterval || 1;
@@ -426,11 +439,11 @@
 
           if (options.enable) {
             for (var n in options.enable) {
-              if (options.hasOwnProperty(n)) _settings[n] = options.enable[n];
+              if (options.enable.hasOwnProperty(n)) _settings[n] = options.enable[n];
             }
           }
 
-          if (options.logFile) {
+          if (options.logSettingsFile) {
             this._initLogRefresh(options);
           }
 
@@ -483,9 +496,9 @@
                 if (c.length == 3) console.log(c[0], c[1], c[2]);
                 if (c.length == 4) console.log(c[0], c[1], c[2], c[3]);
               });
-              me._log.length = 0;
               console.groupEnd();
             }
+            me._log.length = 0;
           };
 
           var _log2 = function _log2() {
@@ -520,8 +533,10 @@
               console.table(me._metrics, ["cnt", "latest", "min", "max", "avg"]);
               console.groupEnd();
             } else {
-              console.log("=== node.js METRICS ===");
+              var mCnt = 0;
               for (var n in me._metrics) {
+                mCnt++;
+                if (mCnt == 1) console.log("=== node.js METRICS ===");
                 var o = me._metrics[n];
                 console.log(n, o["cnt"], o["latest"], o["min"], o["max"], o["avg"]);
               }
